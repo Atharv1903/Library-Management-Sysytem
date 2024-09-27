@@ -11,64 +11,60 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 public class LibraryTest {
+    
     private Library library;
 
+    // Initializes a new library before each test
     @BeforeEach
     public void setUp() {
         library = new Library();
     }
 
+    // Tests adding a book to the library
     @Test
     public void testAddBook() {
         Book book = new Book("978-3-16-148410-0", "The Great Gatsby", "F. Scott Fitzgerald", 1925);
         library.addBook(book);
-        System.out.println("Book added: " + book);
         assertEquals(1, library.getAvailableBooks().size(), "Book was not added to the library.");
-        System.out.println("Total available books: " + library.getAvailableBooks().size());
     }
 
+    // Tests borrowing an available book
     @Test
     public void testBorrowAvailableBook() {
         Book book = new Book("978-3-16-148410-0", "The Great Gatsby", "F. Scott Fitzgerald", 1925);
         library.addBook(book);
-        System.out.println("Book added: " + book);
         library.borrowBook(book);
-        System.out.println("Book borrowed: " + book);
         assertFalse(book.isAvailable(), "Book should not be available after being borrowed.");
-        System.out.println("Book availability: " + book.isAvailable());
     }
 
+    // Tests borrowing an unavailable book, expecting an exception
     @Test
     public void testBorrowUnavailableBook() {
         Book book = new Book("978-3-16-148410-0", "The Great Gatsby", "F. Scott Fitzgerald", 1925);
         library.addBook(book);
-        System.out.println("Book added: " + book);
         library.borrowBook(book); // First borrow
-        System.out.println("First borrow successful: " + book);
         assertThrows(IllegalStateException.class, () -> library.borrowBook(book), "Borrowing an unavailable book should throw an exception.");
     }
 
+    // Tests returning a borrowed book to the library
     @Test
     public void testReturnBook() {
         Book book = new Book("978-3-16-148410-0", "The Great Gatsby", "F. Scott Fitzgerald", 1925);
         library.addBook(book);
-        System.out.println("Book added: " + book);
         library.borrowBook(book);
-        System.out.println("Book borrowed: " + book);
         library.returnBook(book);
-        System.out.println("Book returned: " + book);
         assertTrue(book.isAvailable(), "Book should be available after being returned.");
-        System.out.println("Book availability after return: " + book.isAvailable());
     }
 
+    // Tests displaying available books and capturing console output
     @Test
     public void testShowAvailableBooks() {
-        // Capture the output of the showAvailableBooks method
+        // Capture console output
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out; // Save the original System.out
-        System.setOut(new PrintStream(outputStream)); // Redirect System.out to our output stream
+        PrintStream originalOut = System.out; // Save original System.out
+        System.setOut(new PrintStream(outputStream)); // Redirect System.out to outputStream
 
-        // Add some books to the library
+        // Add books to the library
         Book book1 = new Book("978-3-16-148410-0", "The Great Gatsby", "F. Scott Fitzgerald", 1925);
         Book book2 = new Book("978-1-56619-909-4", "To Kill a Mockingbird", "Harper Lee", 1960);
         Book book3 = new Book("978-0-7432-7356-5", "1984", "George Orwell", 1949);
@@ -77,22 +73,19 @@ public class LibraryTest {
         library.addBook(book2);
         library.addBook(book3);
 
-        // Borrow one book to make it unavailable
+        // Borrow a book to make it unavailable
         library.borrowBook(book1);
 
-        // Call the method to display available books
+        // Display available books
         library.showAvailableBooks();
 
-        // Reset System.out back to original so further prints show on terminal
+        // Reset System.out to original
         System.setOut(originalOut);
 
-        // Convert the captured output to a string
+        // Capture output as a string
         String output = outputStream.toString();
 
-        // Print the captured output to the terminal
-        System.out.println("Captured Output:\n" + output);
-
-        // Assert that the available books are displayed correctly
+        // Check if the correct books are shown as available
         assertTrue(output.contains("To Kill a Mockingbird"), "'To Kill a Mockingbird' should be in available books.");
         assertTrue(output.contains("1984"), "'1984' should be in available books.");
         assertFalse(output.contains("The Great Gatsby"), "'The Great Gatsby' should not be available.");
