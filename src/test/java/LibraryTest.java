@@ -26,4 +26,16 @@ public class LibraryTest {
         assertEquals(1, library.getAvailableBooks().size(), "Book was not added to the library.");
         System.out.println("Total available books: " + library.getAvailableBooks().size());
     }
+
+    @Test
+    public void testBorrowAvailableBook() {
+        Book book = new Book("978-3-16-148410-0", "The Great Gatsby", "F. Scott Fitzgerald", 1925);
+        library.addBook(book);
+        System.out.println("Book added: " + book);
+        library.borrowBook(book);
+        System.out.println("Book borrowed: " + book);
+        assertFalse(book.isAvailable(), "Book should not be available after being borrowed.");
+        System.out.println("Book availability: " + book.isAvailable());
+    }
+
 }
